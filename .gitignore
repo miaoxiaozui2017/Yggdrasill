@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Cmake Cache
+build/*
+
+# IDE Cache
+.vscode/*
