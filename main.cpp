@@ -7,8 +7,11 @@ int main(int, char **)
   FILE *pFile = fopen(szfilename, "a+");
   while (1)
   {
-    fprintf(pFile, "hello world\n");
+    pid_t pid = getpid();
+    pid_t ppid = getppid();
+    fprintf(pFile, "pid = %d, ppid = %d, hello world\n", pid, ppid);
 		fflush(pFile);
 		sleep(2);
   }
+  exit(0);
 }

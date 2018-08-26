@@ -184,7 +184,8 @@ bool start_daemon()
 void worker(long i)
 {
 	sigset_t set;
-
+  int childpid;
+  int res;
 	//子进程继承父进程对信号的屏蔽，所以这里需要解除对信号的屏蔽
 	sigemptyset(&set);
 	if (sigprocmask(SIG_SETMASK, &set, NULL) == -1)
@@ -192,26 +193,44 @@ void worker(long i)
 		printf("work sigprocmask failed\n");
 		return;
 	}
+  pid_t pid = fork();
+  switch(pid)
+  {
+  case -1:
+    perror("pid failed\n");
+    exit(0);
+    return;
+  case 0:
+    res = execl("/home/sos-yuki-n/GitlabSync/Yggdrasill/build/Yggdrasill", NULL);
+    if (res < 0)
+    {
+      perror("error on exec\n");
+      exit(0);
+    }
+  default:
+    wait(&childpid);
+    printf("exec on done.\n");
+  }
+  return;
+	// FILE *pFile = fopen(szfilename, "a+");
 
-	FILE *pFile = fopen(szfilename, "a+");
+	// while (true)
+	// {
+	// 	if (terminate)
+	// 	{
+	// 		exit(0);
+	// 	}
 
-	while (true)
-	{
-		if (terminate)
-		{
-			exit(0);
-		}
+	// 	fprintf(pFile, "pid = %ld hello world\n", i);
+	// 	fflush(pFile);
+	// 	sleep(2);
+	// }
 
-		fprintf(pFile, "pid = %ld hello world\n", i);
-		fflush(pFile);
-		sleep(2);
-	}
-
-	if (NULL != pFile)
-	{
-		fclose(pFile);
-		pFile = NULL;
-	}
+	// if (NULL != pFile)
+	// {
+	// 	fclose(pFile);
+	// 	pFile = NULL;
+	// }
 }
 
 void init_signals()
@@ -236,7 +255,6 @@ void init_signals()
 void start_worker_processes()
 {
 	pid_t pid;
-
 	pid = fork();
 	switch (pid)
 	{
