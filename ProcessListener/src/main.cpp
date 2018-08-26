@@ -280,16 +280,16 @@ int main(int argc, char **argv)
 			return 1;
 		}
 		fin >> root;
-		std::string encoding = root.get("encoding", "UTF-8").asString();
-		std::cout << encoding << std::endl;
-		std::string key1 = root["key1"].asString();
-		std::cout << key1 << std::endl;
-		const Value key2 = root["key2"];
+		// std::string encoding = root.get("encoding", "UTF-8").asString();
+		// std::cout << encoding << std::endl;
+		// std::string key1 = root["key1"].asString();
+		// std::cout << key1 << std::endl;
+		// const Value key2 = root["key2"];
 
-		for (size_t i = 0; i < key2.size(); i++)
-		{
-			std::cout << key2[static_cast<int>(i)].asString() << std::endl;
-		}
+		// for (size_t i = 0; i < key2.size(); i++)
+		// {
+		// 	std::cout << key2[static_cast<int>(i)].asString() << std::endl;
+		// }
 
 		std::cout << root << std::endl;
 		fin.close();

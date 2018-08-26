@@ -52,3 +52,6 @@
 ## 开发过程中临时借用的第三方库
 * tclap
 * jsoncpp
+
+## Ubuntu系统下安装以来环境
+sudo apt install libtclap-dev libjsoncpp-dev
