@@ -4,7 +4,9 @@ project(Yggdrasill VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
+include(DataTransform/CMakeLists.txt)
 include(ProcessListener/CMakeLists.txt)
+
 
 add_executable(Yggdrasill main.cpp)
 

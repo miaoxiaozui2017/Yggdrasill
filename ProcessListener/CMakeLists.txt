@@ -5,7 +5,7 @@ project(ProcessListener VERSION 0.1.0)
 # enable_testing()
 
 add_executable(ProcessListener ProcessListener/src/main.cpp)
-target_link_libraries(ProcessListener jsoncpp)
+target_link_libraries(ProcessListener jsoncpp UdpServer)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
