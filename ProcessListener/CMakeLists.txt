@@ -5,6 +5,8 @@ project(ProcessListener VERSION 0.1.0)
 # enable_testing()
 
 add_executable(ProcessListener ProcessListener/src/main.cpp)
+add_executable(SigProcess ProcessListener/src/SigProcess.cpp)
+add_executable(MultiSignal ProcessListener/src/MultiSignal.cpp)
 target_link_libraries(ProcessListener jsoncpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

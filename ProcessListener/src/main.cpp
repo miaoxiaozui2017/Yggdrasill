@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <unistd.h>
-// getpid() / getppid() / daemon() / get_current_dir_name()
+// getpid() / getppid() / daemon() / get_current_dir_name() / fork()
 #include <sys/wait.h>
 // struct sigaction
 // #include <sys/types.h>
@@ -346,7 +346,7 @@ int main(int argc, char **argv)
 		while (true)
 		{
 			//sigsuspend(const sigset_t *mask))用于在接收到某个信号之前, 临时用mask替换进程的信号掩码, 并暂停进程执行，直到收到信号为止。
-			sigsuspend(&set);
+			//sigpending(&set);
 			if (terminate)
 			{
 				kill(worker_pid, SIGTERM);		//通知子进程关闭
