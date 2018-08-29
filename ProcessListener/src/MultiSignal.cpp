@@ -65,7 +65,6 @@ int main(int argc, char ** argv)
 
   pid_t child;
 
-
   char buffer[50];
   getcwd(&buffer[0], 50);
   strcat(buffer, "/Yggdrasill");
