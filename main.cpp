@@ -16,5 +16,8 @@ int main(int, char **)
   // }
   //exit(0);
   printf("Yggdrasill\n");
+  printf("Sleeping");
+  sleep(5);
+  printf("OK\n");
   return 0;
 }
