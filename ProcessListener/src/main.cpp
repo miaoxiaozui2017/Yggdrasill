@@ -14,7 +14,7 @@
 // memset()
 
 #include <tclap/CmdLine.h>
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 
 using namespace TCLAP;
 using namespace Json;
@@ -212,25 +212,6 @@ void worker(long i)
     printf("exec on done.\n");
   }
   return;
-	// FILE *pFile = fopen(szfilename, "a+");
-
-	// while (true)
-	// {
-	// 	if (terminate)
-	// 	{
-	// 		exit(0);
-	// 	}
-
-	// 	fprintf(pFile, "pid = %ld hello world\n", i);
-	// 	fflush(pFile);
-	// 	sleep(2);
-	// }
-
-	// if (NULL != pFile)
-	// {
-	// 	fclose(pFile);
-	// 	pFile = NULL;
-	// }
 }
 
 void init_signals()
@@ -323,6 +304,7 @@ int main(int argc, char **argv)
 	// 引导执行对应功能
 	try
 	{
+		// Parse
 		CmdLine cmd("What is this XXX message", ' ', "0.1");
 
 		ValueArg<std::string> nameArg("n", "name", "Path of config file", true, "homer", "FileName");
@@ -330,8 +312,23 @@ int main(int argc, char **argv)
 
 		cmd.parse(argc, argv);
 
+		// Open file
+		std::ofstream fout;
+		fout.open(szfilename, std::ios_base::app);
+		if (!fout.is_open())
+		{
+			std::cerr << "Cannot open " << szfilename << std::endl;
+			return 1;
+		}
+		//FILE *pFile = fopen(szfilename, "a+");
+		pid_t pid = getpid();
+		pid_t ppid = getppid();
+		//fprintf(pFile, "pid = %d, ppid = %d, hello world\n", pid, ppid);
+		fout << "pid = " << pid << ", ppid = " << ppid << ", hello world.\n";
 		std::string name = nameArg.getValue();
-		std::cout << name << std::endl;
+		//std::cout << name << std::endl;
+		//fprintf(pFile, "name = %s\n", name.c_str());
+		fout << "name = " << name << std::endl;
 		// 读取json文件
 		Value root;
 		std::ifstream fin(name);
@@ -343,17 +340,21 @@ int main(int argc, char **argv)
 		fin >> root;
 		// std::string encoding = root.get("encoding", "UTF-8").asString();
 		// std::cout << encoding << std::endl;
-		// std::string key1 = root["key1"].asString();
-		// std::cout << key1 << std::endl;
+		std::string nodeName = root["NodeName"].asString();
+		//std::cout << key1 << std::endl;
+		//fprintf(pFile, "key1 = %s\n", key1.c_str());
+		fout << "NodeName = " << nodeName << std::endl;
 		// const Value key2 = root["key2"];
-
 		// for (size_t i = 0; i < key2.size(); i++)
 		// {
 		// 	std::cout << key2[static_cast<int>(i)].asString() << std::endl;
 		// }
-
-		std::cout << root << std::endl;
+		// std::cout << root << std::endl;
+		fout << root << std::endl;
 		fin.close();
+		sleep(2);
+		fout .close();
+		return 0;
 
 		// 调用和监控子进程
 		sigset_t set;

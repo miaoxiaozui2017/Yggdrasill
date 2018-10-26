@@ -57,5 +57,7 @@
 * tclap
 * jsoncpp
 
-## Ubuntu系统下安装以来环境
+## Ubuntu系统下安装依赖环境
 sudo apt install libtclap-dev libjsoncpp-dev
+## Archlinux系统下安装依赖环境
+sudo pacman -S tclap jsoncpp

@@ -1,0 +1,11 @@
+[Unit]
+Description=Yggdrasill ProcessListener Daemon
+
+[Service]
+ExecStart=/home/sos-yuki-n/Develop/Yggdrasill/build/ProcessListener -n /home/sos-yuki-n/Develop/Yggdrasill/build/test.json
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
