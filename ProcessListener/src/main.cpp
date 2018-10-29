@@ -14,7 +14,7 @@
 // memset()
 
 #include <tclap/CmdLine.h>
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 
 #include "../../DataTransform/include/UdpServer.hpp"
 
