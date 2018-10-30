@@ -5,7 +5,7 @@ bool Serial::Open(const SerialConfig& conf)
   // Open serial port
   if ( (m_fd = open(conf.serialName.c_str(), O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
   {
-    perror("Serial can not open.");
+    perror("Serial can not open");
     return false;
   }
   return Config(conf);
@@ -17,7 +17,7 @@ bool Serial::Close()
   {
     if (close(m_fd) != 0)
     {
-      perror("Close failed.");
+      perror("Close failed");
       return false;
     }
     m_fd = -1;
@@ -33,8 +33,14 @@ bool Serial::Config(const SerialConfig& conf)
   tcgetattr(m_fd, &options);
 
   // Set the baud rates
-  cfsetispeed(&options, conf.speed);
-  cfsetospeed(&options, conf.speed);
+  speed_t speed = B0;
+  if ( (speed = GetBaudRate(conf.speed)) == B0)
+  {
+    fprintf(stderr, "Undefined baud rate.\n");
+    return false;
+  }
+  cfsetispeed(&options, speed);
+  cfsetospeed(&options, speed);
   // Enable the receiver and set local mode
   options.c_cflag |= (CLOCAL | CREAD);
   
@@ -62,22 +68,22 @@ bool Serial::Config(const SerialConfig& conf)
       options.c_cflag &= ~PARENB;// Clear parity enable
       options.c_iflag &= ~INPCK; // Enable parity checking
       break;
-    case 'o':   
-    case 'O':     
+    case 'o':
+    case 'O':
       options.c_cflag |= (PARODD | PARENB); // 设置为奇效验
       options.c_iflag |= INPCK;             // Disnable parity checking
-      break;  
-    case 'e':  
-    case 'E':   
+      break;
+    case 'e':
+    case 'E':
       options.c_cflag |= PARENB;     // Enable parity
       options.c_cflag &= ~PARODD;   // 转换为偶效验
       options.c_iflag |= INPCK;       // Disnable parity checking
       break;
-    case 'S': 
-    case 's':  //as no parity  
+    case 'S':
+    case 's':  //as no parity
       options.c_cflag &= ~PARENB;
       options.c_cflag &= ~CSTOPB;
-      break;  
+      break;
     default:
       fprintf(stderr, "Unsupported parity.\n");
       return false;
@@ -85,16 +91,16 @@ bool Serial::Config(const SerialConfig& conf)
 
   // Set stopbits
   switch (conf.stopbits)
-  {  
-    case 1:    
-      options.c_cflag &= ~CSTOPB;  
-      break;  
-    case 2:    
-      options.c_cflag |= CSTOPB;  
+  {
+    case 1:
+      options.c_cflag &= ~CSTOPB;
       break;
-    default:    
-      fprintf(stderr,"Unsupported stopbits.\n");  
-      return false; 
+    case 2:
+      options.c_cflag |= CSTOPB;
+      break;
+    default:
+      fprintf(stderr,"Unsupported stopbits.\n");
+      return false;
   }
   if (conf.parity != 'n' && conf.parity != 'N')
     options.c_iflag |= INPCK;
@@ -117,4 +123,22 @@ bool Serial::Config(const SerialConfig& conf)
   //   fcntl(m_fd, F_SETFL, FNDELAY);
   // }
   return true;
+}
+
+speed_t Serial::GetBaudRate(const int& speed)
+{
+  switch (speed)
+  {
+    case 2400: return B2400;
+    case 4800: return B4800;
+    case 9600: return B9600;
+    case 19200: return B19200;
+    case 38400: return B38400;
+    case 57600: return B57600;
+    case 115200: return B115200;
+    case 230400: return B230400;
+    case 460800: return B460800;
+    case 500000: return B500000;
+    default: return B0;
+  }
 }

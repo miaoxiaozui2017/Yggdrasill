@@ -15,7 +15,7 @@
 struct SerialConfig
 {
   std::string serialName;
-  speed_t speed;
+  int speed;
   int databits;
   char parity;
   int stopbits;
@@ -60,7 +60,7 @@ public:
     char buf[1024];
     if ( (byte = read(m_fd, &buf[0], 1024)) == -1)
     {
-      perror("Error in sending.");
+      //perror("Error in recv.");
       return false;
     }
     buffer.assign(buf, buf + byte);
@@ -71,6 +71,7 @@ public:
   ~Serial() { Close(); }
 private:
   bool Config(const SerialConfig& conf);
+  speed_t GetBaudRate(const int& speed);
   int m_fd;
 };
 

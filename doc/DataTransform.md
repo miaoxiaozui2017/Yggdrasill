@@ -41,11 +41,13 @@
 
 # SerialConfig.json配置文件定义
 
-`{
+```
+{
   "serialName" : "/dev/ttyS0",
   "speed" : 2400,
   "databits" : 8,
   "parity" : "N",
   "stopbits" : 1,
   "isBlocked" : false
-}`
+}
+```
