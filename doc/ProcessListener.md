@@ -23,3 +23,11 @@
   监控计算资源  
   管理计算资源  
   监控节点链路  
+
+# 实现笔记
+ProcessListener在系统启动后以服务形式执行
+ProcessListener以守护进程形式存在于系统中
+使用systemctl配置服务
+服务文件所在目录为/lib/systemd/system/
+程序执行时间周期内pid文件所在目录为/run/ProcessListener.pid
+服务日志文件所在目录为/var/log/ProcessListener.log

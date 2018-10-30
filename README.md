@@ -48,3 +48,16 @@
   * 接纳图形界面控制台
   * 接纳文本控制台
   * 接纳其他各种项目需求(dirty code)
+## 5. 日志系统
+  * 主函数初始化目录位置
+  * 系统全局可调用
+  * 记录包含时间信息、代码文件位置、代码行数、错误信息
+
+## 开发过程中临时借用的第三方库
+* tclap
+* jsoncpp
+
+## Ubuntu系统下安装依赖环境
+sudo apt install libtclap-dev libjsoncpp-dev
+## Archlinux系统下安装依赖环境
+sudo pacman -S tclap jsoncpp
