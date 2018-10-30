@@ -16,6 +16,8 @@
 #include <tclap/CmdLine.h>
 #include <json/json.h>
 
+#include "../../DataTransform/include/UdpServer.hpp"
+
 using namespace TCLAP;
 using namespace Json;
 // input
@@ -25,12 +27,12 @@ using namespace Json;
 // 开放端口号
 struct Msg
 {
-	enum MsgT
-	{
-		ACK,
-		QUIT
-	};
-	MsgT msgType;
+  enum MsgT
+  {
+    ACK,
+    QUIT
+  };
+  MsgT msgType;
 };
 
 // 信号全局变量
@@ -50,205 +52,227 @@ bool start_daemon();
 // 信号处理
 struct signal_t
 {
-	int signo;
-	void (*handler)(int signo);
+  int signo;
+  void (*handler)(int signo);
 };
 
 // 指定信号处理函数
 signal_t signals[] = {
-		{SIGHUP, signal_handler},
-		{SIGQUIT, signal_handler},
-		{SIGTERM, signal_handler},
-		{SIGALRM, signal_handler},
-		{SIGINT, signal_handler},
-		{SIGIO, signal_handler},
-		{SIGCHLD, signal_handler},
-		{SIGSYS, SIG_IGN},
-		{SIGPIPE, SIG_IGN},
-		{0, NULL}};
+    {SIGHUP, signal_handler},
+    {SIGQUIT, signal_handler},
+    {SIGTERM, signal_handler},
+    {SIGALRM, signal_handler},
+    {SIGINT, signal_handler},
+    {SIGIO, signal_handler},
+    {SIGCHLD, signal_handler},
+    {SIGSYS, SIG_IGN},
+    {SIGPIPE, SIG_IGN},
+    {0, NULL}};
 
 // 信号处理函数
 void signal_handler(int signo)
 {
-	signal_t *sig;
-	for (sig = signals; sig->signo != 0; sig++)
-	{
-		if (sig->signo == signo)
-			break;
-	}
-	switch (signo)
-	{
-	case SIGTERM:
-	case SIGINT:
-	{
-		terminate = 1;
-		break;
-	}
-	case SIGCHLD:
-	{
-		reap = 1;
-		break;
-	}
-	default:
-	{
-		break;
-	}
-	}
+  signal_t *sig;
+  for (sig = signals; sig->signo != 0; sig++)
+  {
+    if (sig->signo == signo)
+      break;
+  }
+  switch (signo)
+  {
+  case SIGTERM:
+  case SIGINT:
+  {
+    terminate = 1;
+    break;
+  }
+  case SIGCHLD:
+  {
+    reap = 1;
+    break;
+  }
+  default:
+  {
+    break;
+  }
+  }
 }
 
 bool start_daemon()
 {
-	int fd;
+  int fd;
 
-	switch (fork())
-	{
-	case -1:
-		printf("fork() failed\n");
-		return false;
+  switch (fork())
+  {
+  case -1:
+    printf("fork() failed\n");
+    return false;
 
-	case 0:
-		break;
+  case 0:
+    break;
 
-	default:
-		exit(0);
-	}
+  default:
+    exit(0);
+  }
 
-	if (setsid() == -1)
-	{
-		printf("setsid() failed\n");
-		return false;
-	}
+  if (setsid() == -1)
+  {
+    printf("setsid() failed\n");
+    return false;
+  }
 
-	switch (fork())
-	{
-	case -1:
-		printf("fork() failed\n");
-		return false;
+  switch (fork())
+  {
+  case -1:
+    printf("fork() failed\n");
+    return false;
 
-	case 0:
-		break;
+  case 0:
+    break;
 
-	default:
-		exit(0);
-	}
+  default:
+    exit(0);
+  }
 
-	umask(0);
-	chdir("/");
+  umask(0);
+  chdir("/");
 
-	long maxfd;
-	if ((maxfd = sysconf(_SC_OPEN_MAX)) != -1)
-	{
-		for (fd = 0; fd < maxfd; fd++)
-		{
-			close(fd);
-		}
-	}
+  long maxfd;
+  if ((maxfd = sysconf(_SC_OPEN_MAX)) != -1)
+  {
+    for (fd = 0; fd < maxfd; fd++)
+    {
+      close(fd);
+    }
+  }
 
-	fd = open("/dev/null", O_RDWR);
-	if (fd == -1)
-	{
-		printf("open(\"/dev/null\") failed\n");
-		return false;
-	}
+  fd = open("/dev/null", O_RDWR);
+  if (fd == -1)
+  {
+    printf("open(\"/dev/null\") failed\n");
+    return false;
+  }
 
-	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		printf("dup2(STDIN) failed\n");
-		return false;
-	}
+  if (dup2(fd, STDIN_FILENO) == -1)
+  {
+    printf("dup2(STDIN) failed\n");
+    return false;
+  }
 
-	if (dup2(fd, STDOUT_FILENO) == -1)
-	{
-		printf("dup2(STDOUT) failed\n");
-		return false;
-	}
+  if (dup2(fd, STDOUT_FILENO) == -1)
+  {
+    printf("dup2(STDOUT) failed\n");
+    return false;
+  }
 
-	if (dup2(fd, STDERR_FILENO) == -1)
-	{
-		printf("dup2(STDERR) failed\n");
-		return false;
-	}
+  if (dup2(fd, STDERR_FILENO) == -1)
+  {
+    printf("dup2(STDERR) failed\n");
+    return false;
+  }
 
-	if (fd > STDERR_FILENO)
-	{
-		if (close(fd) == -1)
-		{
-			printf("close() failed\n");
-			return false;
-		}
-	}
+  if (fd > STDERR_FILENO)
+  {
+    if (close(fd) == -1)
+    {
+      printf("close() failed\n");
+      return false;
+    }
+  }
 
-	return true;
+  return true;
 }
 
 void worker(long i)
 {
-	sigset_t set;
+  sigset_t set;
   int childpid;
   int res;
-	//子进程继承父进程对信号的屏蔽，所以这里需要解除对信号的屏蔽
-	sigemptyset(&set);
-	if (sigprocmask(SIG_SETMASK, &set, NULL) == -1)
-	{
-		printf("work sigprocmask failed\n");
-		return;
-	}
+  //子进程继承父进程对信号的屏蔽，所以这里需要解除对信号的屏蔽
+  sigemptyset(&set);
+  if (sigprocmask(SIG_SETMASK, &set, NULL) == -1)
+  {
+    printf("work sigprocmask failed\n");
+    return;
+  }
+
   pid_t pid = fork();
-  switch(pid)
+  switch (pid)
   {
   case -1:
-    perror("pid failed\n");
-    exit(0);
+    printf("exec fork failure\n");
     return;
   case 0:
-    res = execl("/home/sos-yuki-n/GitlabSync/Yggdrasill/build/Yggdrasill", NULL);
+    res = execl("/home/jlurobot/GitLabSync/Yggdrasill/build/Yggdrasill", NULL);
     if (res < 0)
     {
       perror("error on exec\n");
       exit(0);
     }
+    break;
   default:
     wait(&childpid);
-    printf("exec on done.\n");
+    break;
   }
-  return;
+  
+ 
+  exit(0);
+  // FILE *pFile = fopen(szfilename, "a+");
+
+  // while (true)
+  // {
+  // 	if (terminate)
+  // 	{
+  // 		exit(0);
+  // 	}
+
+  // 	fprintf(pFile, "pid = %ld hello world\n", i);
+  // 	fflush(pFile);
+  // 	sleep(2);
+  // }
+
+  // if (NULL != pFile)
+  // {
+  // 	fclose(pFile);
+  // 	pFile = NULL;
+  // }
 }
 
 void init_signals()
 {
-	signal_t *sig;
-	struct sigaction sa;
+  signal_t *sig;
+  struct sigaction sa;
 
-	for (sig = signals; sig->signo != 0; sig++)
-	{
-		memset(&sa, 0, sizeof(struct sigaction));
-		sa.sa_handler = sig->handler;
-		sigemptyset(&sa.sa_mask);
+  for (sig = signals; sig->signo != 0; sig++)
+  {
+    memset(&sa, 0, sizeof(struct sigaction));
+    sa.sa_handler = sig->handler;
+    sigemptyset(&sa.sa_mask);
 
-		if (sigaction(sig->signo, &sa, NULL) == -1)
-		{
-			printf("sigaction error\n");
-			return;
-		}
-	}
+    if (sigaction(sig->signo, &sa, NULL) == -1)
+    {
+      printf("sigaction error\n");
+      return;
+    }
+  }
 }
 
 void start_worker_processes()
 {
-	pid_t pid;
-	pid = fork();
-	switch (pid)
-	{
-	case -1:
-		printf("exec fork failure\n");
-		return;
-	case 0:
-		worker((long)getpid());
-		break;
-	default:
-		worker_pid = pid;
-		break;
-	}
+  pid_t pid;
+  pid = fork();
+  switch (pid)
+  {
+  case -1:
+    printf("exec fork failure\n");
+    return;
+  case 0:
+    worker((long)getpid());
+    break;
+  default:
+    worker_pid = pid;
+    break;
+  }
 }
 
 int main(int argc, char **argv)

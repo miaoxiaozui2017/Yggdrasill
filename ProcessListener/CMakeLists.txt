@@ -8,7 +8,7 @@ add_executable(ProcessListener ProcessListener/src/main.cpp)
 add_executable(SigProcess ProcessListener/src/SigProcess.cpp)
 add_executable(MultiSignal ProcessListener/src/MultiSignal.cpp)
 add_executable(ListenProcess ProcessListener/src/ProcessListener.cpp)
-target_link_libraries(ProcessListener jsoncpp)
+target_link_libraries(ProcessListener jsoncpp UdpServer)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
