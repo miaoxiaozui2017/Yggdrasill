@@ -136,43 +136,105 @@ int main(int argc, char ** argv)
     serialPort.Open(conf);
     std::string str;
     std::vector<char> buf;
+    unsigned char pelcoD[][7] = {
+      {0xff,0x01,0x00,0x08,0x00,0xff,0x08},//上
+      {0xff,0x01,0x00,0x10,0x00,0xff,0x10},//下
+      {0xff,0x01,0x00,0x04,0xff,0x00,0x04},//左
+      {0xff,0x01,0x00,0x02,0xff,0x00,0x02},//右
+      {0xff,0x01,0x00,0x20,0x00,0x00,0x21},//变倍短
+      {0xff,0x01,0x00,0x40,0x00,0x00,0x41},//变倍长
+      {0xff,0x01,0x00,0x80,0x00,0x00,0x81},//聚焦近
+      {0xff,0x01,0x01,0x00,0x00,0x00,0x02},//聚焦远
+      {0xff,0x01,0x02,0x00,0x00,0x00,0x03},//光圈小
+      {0xff,0x01,0x04,0x00,0x00,0x00,0x05},//光圈大
+      {0xff,0x01,0x00,0x0b,0x00,0x01,0x0d},//灯光关
+      {0xff,0x01,0x00,0x09,0x00,0x01,0x0b},//灯光开
+      {0xff,0x01,0x00,0x07,0x00,0x01,0x09},//转至预置点001
+      {0xff,0x01,0x00,0x03,0x00,0x01,0x05},//设置预置点001
+      {0xff,0x01,0x00,0x05,0x00,0x01,0x07},//删除预置点001
+      {0xff,0x01,0x00,0x00,0x00,0x00,0x01}//停命令
+    };
+    srand(time(0));
+    std::vector<unsigned char> sendBuf;
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[15], pelcoD[15] + 7);
+    std::cout << "stop" << std::endl;
+    serialPort.Send(sendBuf);
+    // up
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[0], pelcoD[0] + 7);
+    std::cout << "up" << std::endl;
+    serialPort.Send(sendBuf);
+    sleep(18);
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[15], pelcoD[15] + 7);
+    std::cout << "stop" << std::endl;
+    serialPort.Send(sendBuf);
+    // down
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[1], pelcoD[1] + 7);
+    std::cout << "down" << std::endl;
+    serialPort.Send(sendBuf);
+    sleep(7);
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[15], pelcoD[15] + 7);
+    std::cout << "stop" << std::endl;
+    serialPort.Send(sendBuf);
+    // left
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[2], pelcoD[2] + 7);
+    std::cout << "left" << std::endl;
+    serialPort.Send(sendBuf);
+    sleep(25);
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[15], pelcoD[15] + 7);
+    std::cout << "stop" << std::endl;
+    serialPort.Send(sendBuf);
+    // right
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[3], pelcoD[3] + 7);
+    std::cout << "right" << std::endl;
+    serialPort.Send(sendBuf);
+    sleep(12);
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[15], pelcoD[15] + 7);
+    std::cout << "stop" << std::endl;
+    serialPort.Send(sendBuf);
+    
+    sendBuf.clear();
+    sendBuf.assign(pelcoD[15], pelcoD[15] + 7);
+    std::cout << "stop" << std::endl;
+    serialPort.Send(sendBuf);
+
     while (true)
     {
-      if (serialPort.Recv(buf))
-      {
-        std::cerr << "buffer size : " << buf.size() << std::endl;
-        for(size_t i = 0; i < buf.size(); i++)
-        {
-          std::cerr << buf[i];
-        }
-        std::cerr << std::endl;
-        unsigned char pelcoD[][7] = {
-          {0xff,0x01,0x00,0x08,0x00,0xff,0x08},//上
-          {0xff,0x01,0x00,0x10,0x00,0xff,0x10},//下
-          {0xff,0x01,0x00,0x04,0xff,0x00,0x04},//左
-          {0xff,0x01,0x00,0x02,0xff,0x00,0x02},//右
-          {0xff,0x01,0x00,0x20,0x00,0x00,0x21},//变倍短
-          {0xff,0x01,0x00,0x40,0x00,0x00,0x41},//变倍长
-          {0xff,0x01,0x00,0x80,0x00,0x00,0x81},//聚焦近
-          {0xff,0x01,0x01,0x00,0x00,0x00,0x02},//聚焦远
-          {0xff,0x01,0x02,0x00,0x00,0x00,0x03},//光圈小
-          {0xff,0x01,0x04,0x00,0x00,0x00,0x05},//光圈大
-          {0xff,0x01,0x00,0x0b,0x00,0x01,0x0d},//灯光关
-          {0xff,0x01,0x00,0x09,0x00,0x01,0x0b},//灯光开
-          {0xff,0x01,0x00,0x07,0x00,0x01,0x09},//转至预置点001
-          {0xff,0x01,0x00,0x03,0x00,0x01,0x05},//设置预置点001
-          {0xff,0x01,0x00,0x05,0x00,0x01,0x07},//删除预置点001
-          {0xff,0x01,0x00,0x00,0x00,0x00,0x01}//停命令
-        };
-        std::vector<unsigned char> sendBuf(pelcoD[0], pelcoD[0] + 7);
-        serialPort.Send(sendBuf);
-      }
-      else
-      {
-        std::cerr << "Get error." << std::endl;
-        sleep(1);
-      }
-      
+      int ctrl = rand() % 4;
+      int delay = rand() % 7;
+      std::cerr << "ctrl " << ctrl << " ";
+      std::cerr << "delay " << delay << " ";
+      sendBuf.clear();
+      sendBuf.assign(pelcoD[ctrl], pelcoD[ctrl] + 7);
+      serialPort.Send(sendBuf);
+      sleep(delay);
+      sendBuf.clear();
+      sendBuf.assign(pelcoD[15], pelcoD[15] + 7);
+      std::cerr << "stop" << std::endl;
+      serialPort.Send(sendBuf);
+      //sleep(1);
+      // if (serialPort.Recv(buf))
+      // {
+      //   std::cerr << "buffer size : " << buf.size() << std::endl;
+      //   for(size_t i = 0; i < buf.size(); i++)
+      //   {
+      //     std::cerr << buf[i];
+      //   }
+      //   std::cerr << std::endl;
+      // }
+      // else
+      // {
+      //   std::cerr << "Get error." << std::endl;
+      //   sleep(1);
+      // }
     }
     serialPort.Close();
 

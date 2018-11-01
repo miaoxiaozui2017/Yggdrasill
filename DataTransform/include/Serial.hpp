@@ -44,7 +44,6 @@ public:
       perror("Error in sending.");
       return false;
     }
-    fprintf(stdout, "%d bytes sent.\n", byte);
     return true;
   }
 
