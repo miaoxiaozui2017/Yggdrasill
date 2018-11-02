@@ -29,6 +29,8 @@ endforeach()
 
 add_executable(${PROJECT_NAME} DataTransform/src/main.cpp)
 target_link_libraries(${PROJECT_NAME} UdpClient)
+target_link_libraries(Serial SerialLinuxImpl)
+target_link_libraries(Serial SerialWindowsImpl)
 target_link_libraries(${PROJECT_NAME} Serial)
 target_link_libraries(${PROJECT_NAME} jsoncpp)
 # target_link_libraries(${PROJECT_NAME}
