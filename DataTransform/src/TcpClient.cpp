@@ -1,6 +1,6 @@
 #include "TcpClient.hpp"
 
-TCPClient::~TCPClient()
+TcpClient::~TcpClient()
 {
   DisConnect();
   if (m_transform != nullptr)
@@ -9,16 +9,15 @@ TCPClient::~TCPClient()
     m_transform = nullptr;
   }
 }
-bool TCPClient::Init()
+bool TcpClient::Init()
 {
 #ifdef _WIN32
   WSADATA wsaData;
   WORD sockVersion = MAKEWORD(2, 2);
   if (WSAStartup(sockVersion, &wsaData) != 0) return false;
-  m_sockFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-#elif __linux__
-  m_sockFd = socket(AF_INET, SOCK_STREAM, 0);
 #endif
+  m_sockFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
   if (m_sockFd == CRS_INVALID_SOCKET)
   {
     return false;
@@ -41,7 +40,7 @@ bool TCPClient::Init()
   return true;
 }
 
-bool TCPClient::Connect(const char * addr, const unsigned short & servicePort)
+bool TcpClient::Connect(const char * addr, const unsigned short & servicePort)
 {
   m_servAddr.sin_family=AF_INET;
   m_servAddr.sin_port=htons(servicePort);
@@ -66,7 +65,7 @@ bool TCPClient::Connect(const char * addr, const unsigned short & servicePort)
   return false;
 }
 
-bool TCPClient::DisConnect()
+bool TcpClient::DisConnect()
 {
   if (m_isConnected)
   {
@@ -83,7 +82,7 @@ bool TCPClient::DisConnect()
   return false;
 }
 
-bool TCPClient::Recv(std::string& msg)
+bool TcpClient::Recv(std::string& msg)
 {
   if (m_transform == nullptr)
   {
@@ -129,7 +128,7 @@ bool TCPClient::Recv(std::string& msg)
 }
 
 // transform command
-bool TCPClient::Send(const std::string& msg)
+bool TcpClient::Send(const std::string& msg)
 {
   int sentSize = send(m_sockFd, msg.c_str(), msg.length(), 0);
   if (sentSize == static_cast<int>(msg.length()))

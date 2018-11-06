@@ -6,10 +6,8 @@ bool UdpServer::Init()
   WSADATA wsaData;
   WORD sockVersion = MAKEWORD(2, 2);
   if (WSAStartup(sockVersion, &wsaData) != 0) return false;
-  m_sockFd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-#elif __linux__
-  m_sockFd = socket(AF_INET, SOCK_DGRAM, 0);
 #endif
+  m_sockFd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if (m_sockFd == CRS_INVALID_SOCKET)
   {
     std::cout << "Create socket error." << std::endl;

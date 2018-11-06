@@ -29,11 +29,11 @@
 
 #define BUFFER_SIZE 4096
 
-class TCPClient
+class TcpClient
 {
 public:
-  TCPClient() : m_transform(nullptr), m_sockFd(CRS_INVALID_SOCKET), m_isConnected(false) {}
-  ~TCPClient();
+  TcpClient() : m_transform(nullptr), m_sockFd(CRS_INVALID_SOCKET), m_isConnected(false) {}
+  ~TcpClient();
   bool Init();
   bool Connect(const char * addr, const unsigned short & servicePort);
   bool DisConnect();
