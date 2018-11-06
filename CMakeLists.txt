@@ -6,6 +6,7 @@ enable_testing()
 
 include(DataTransform/CMakeLists.txt)
 include(ProcessListener/CMakeLists.txt)
+include(Utils/CMakeLists.txt)
 
 
 add_executable(Yggdrasill main.cpp)

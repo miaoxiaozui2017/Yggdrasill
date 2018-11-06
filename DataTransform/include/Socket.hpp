@@ -12,6 +12,27 @@
 #include <arpa/inet.h>
 #endif
 
+#ifndef SOCKET
+#define SOCKET int
+#endif
+
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET -1
+#endif
+
+#ifndef SOCKET_ERROR
+#define SOCKET_ERROR -1
+#endif
+
+// plan 0
+class SocketImpl
+{
+public:
+  SocketImpl(const int& family, const int& type, const int& protocol);
+private:
+  SOCKET m_sockfd;
+};
+
 class Socket
 {
 public:
@@ -34,26 +55,6 @@ private:
   SocketImpl m_impl;
 };
 
-#ifndef SOCKET
-#define SOCKET int
-#endif
-
-#ifndef INVALID_SOCKET
-#define INVALID_SOCKET -1
-#endif
-
-#ifndef SOCKET_ERROR
-#define SOCKET_ERROR -1
-#endif
-
-// plan 0
-class SocketImpl
-{
-public:
-  SocketImpl(const int& family, const int& type, const int& protocol);
-private:
-  SOCKET m_sockfd;
-};
 // plan 1
 #if 0
 #ifdef _WIN32
