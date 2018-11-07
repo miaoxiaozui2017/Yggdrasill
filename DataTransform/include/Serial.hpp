@@ -7,7 +7,7 @@
 class Serial
 {
 public:
-  Serial() {}
+  Serial() = default;
   bool Open(const SerialConfig& conf) { return m_impl.Open(conf); }
   bool Close() { return m_impl.Close(); }
   template<typename T>
@@ -16,7 +16,7 @@ public:
   template<typename T>
   bool Recv(std::vector<T>& buffer) { return m_impl.Recv(buffer); }
   
-  ~Serial() {}
+  ~Serial() = default;
 private:
   SerialImpl m_impl;
 };

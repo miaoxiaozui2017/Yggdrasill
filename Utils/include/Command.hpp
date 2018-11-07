@@ -6,17 +6,17 @@
 class Command
 {
 public:
-	virtual ~Command() {}
+	virtual ~Command() = default;
 	virtual void Execute() = 0;
 protected:
-	Command() {}
+	Command() = default;
 };
 
 // Actual Operation
 class Obj
 {
 public:
-	Obj() {}
+	Obj() = default;
 	void Action() { std::cout << "Obj::Action()" << std::endl; }
 };
 
@@ -68,8 +68,8 @@ private:
 class MacroCommand : public Command
 {
 public:
-	MacroCommand() {}
-	virtual ~MacroCommand() {}
+	MacroCommand() = default;
+	virtual ~MacroCommand() = default;
 
 	virtual void Add(Command* c)
 	{
